@@ -25,7 +25,7 @@ export class OptionalValue<S, T> extends Type<S, T> {
 
     instantiate(parent: Node, subpath: string, environment: any, value: S): Node {
         if (typeof value === "undefined") {
-            const defaultValue = this.getDefaultValue()
+            const defaultValue = this.getDefaultValue(parent)
             const defaultSnapshot = isStateTreeNode(defaultValue)
                 ? getStateTreeNode(defaultValue).snapshot
                 : defaultValue
@@ -38,8 +38,8 @@ export class OptionalValue<S, T> extends Type<S, T> {
         return this.type.reconcile(current, this.type.is(newValue) ? newValue : this.getDefaultValue())
     }
 
-    private getDefaultValue() {
-        const defaultValue = typeof this.defaultValue === "function" ? this.defaultValue() : this.defaultValue
+    private getDefaultValue(parent: Node) {
+        const defaultValue = typeof this.defaultValue === "function" ? this.defaultValue(parent) : this.defaultValue
         if (typeof this.defaultValue === "function") typecheck(this, defaultValue)
         return defaultValue
     }
